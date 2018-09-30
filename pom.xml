@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>se.independent</groupId>
+  <artifactId>proxy</artifactId>
+  <packaging>war</packaging>
+  <version>0.0.1</version>
+  <name>proxy Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+  
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+  
+  <dependencies>
+ 
+  <dependency>
+    <groupId>org.apache.httpcomponents</groupId>
+    <artifactId>httpasyncclient</artifactId>
+    <version>4.1.3</version>
+</dependency>
+  
+  <dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>javax.servlet-api</artifactId>
+    <version>3.1.0</version>
+    <scope>provided</scope>
+</dependency>
+ 
+ <dependency>
+  <groupId>org.tinylog</groupId>
+  <artifactId>tinylog</artifactId>
+  <version>1.3.4</version>
+</dependency>
+
+  </dependencies>
+
+  <build>
+    <finalName>proxy</finalName>
+    <plugins>
+    
+	<!-- install the war file in the database --> 
+      <plugin>
+        <groupId>se.independent</groupId>
+        <artifactId>dbcl-maven-plugin</artifactId>
+        <version>0.0.1</version>
+        <configuration>
+           <jdbcURL>jdbc:h2:tcp://127.0.0.1//opt/h2-data/dbcl</jdbcURL>
+           <driverURL>jar:file:/c:/Users/jha/h2-1.4.196.jar!/</driverURL>
+           <driverClass>org.h2.Driver</driverClass>
+           <dbUser>DBCLASSLOAD</dbUser>
+           <dbPasswd>Tr1ss</dbPasswd>
+        </configuration>
+        
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>dbcl_install</goal>
+            </goals>
+            </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>
