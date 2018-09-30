@@ -301,15 +301,25 @@ public abstract class AbstractProxy extends HttpServlet {
 
 
 	public void copyHeaders(HttpServletRequest req, HttpRequestBase proxy_req) {
+		String fff = null;
     	final Enumeration<String> en_headers = req.getHeaderNames();
 		while (en_headers.hasMoreElements()) {
 			final String name = (String) en_headers.nextElement();
 			if ("Host".equals(name)) {
 				continue;
 			}
+			if ("X-Forwarded-For".equals(name)) {
+				fff = req.getHeader(name);
+			}
 			Logger.debug("- copyHeaders() name=" + name + " value=" + req.getHeader(name));
 			proxy_req.setHeader(name, req.getHeader(name));
-		}		
+		}
+		
+		if (fff == null) {
+			proxy_req.setHeader("X-Forwarded-For", req.getRemoteAddr() + ", " + req.getLocalAddr());
+		} else {
+			proxy_req.setHeader("X-Forwarded-For", fff + ", " + req.getLocalAddr());
+		}
     }
 
     
