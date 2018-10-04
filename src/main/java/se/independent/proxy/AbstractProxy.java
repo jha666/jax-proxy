@@ -124,7 +124,7 @@ public abstract class AbstractProxy extends HttpServlet {
 	}
 
 	
-	private void refreshProxyConfig() throws ServletException {
+	protected void refreshProxyConfig() throws ServletException {
 		ResultSet rs = null;
 		Connection conn = null;
 		PreparedStatement stmnt = null;
@@ -180,6 +180,9 @@ public abstract class AbstractProxy extends HttpServlet {
 		return so_connect;
 	}
 
+	public Date getGoodThru() {
+		return new Date(good_thru_ms);
+	}
 	
 	public URI buildURI(final HttpServletRequest req, StringBuffer userInfo) {
 		Logger.debug("> buildURI()");
@@ -231,9 +234,7 @@ public abstract class AbstractProxy extends HttpServlet {
         res.setStatus(sc);
         res.setContentType("text/xml;charset=UTF-8");
 
-		//if (LOG.isDebugEnabled()) {
-			Logger.debug("- respond sc=" + sc);
-		//}
+		Logger.debug("- respond() sc=" + sc);
 
         byte[] data = new byte[] {};
         res.setContentLength(data.length);
@@ -334,7 +335,6 @@ public abstract class AbstractProxy extends HttpServlet {
 	
 	
 	protected boolean compare(HttpResponse response, HttpResponse reference) {
-		boolean rv = true;
 		final StatusLine slt = response.getStatusLine();
 		final StatusLine slf = reference.getStatusLine();
 		if (slf.getStatusCode() != slf.getStatusCode()) {

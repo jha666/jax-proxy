@@ -6,7 +6,6 @@ package se.independent.proxy;
 import java.io.IOException;
 import java.net.URI;
 
-import javax.servlet.AsyncContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -126,6 +125,7 @@ public class SyncProxy extends AbstractProxy {
 		Logger.info("< doPost(" + bytes + ")");
 	}
 
+	
 	@Override
 	public void doPut(HttpServletRequest req, final HttpServletResponse res) {
 		Logger.info("> doPut(" + req.getRemoteHost() + ", " + req.getRequestURI() + "," + res.hashCode() + ")");
@@ -154,7 +154,7 @@ public class SyncProxy extends AbstractProxy {
 			Logger.error("# doPut()", iox);
 	    }
 
-		Logger.info("< doPut()");
+		Logger.info("< doPut(" + bytes + ")");
 	}
 
 	
@@ -217,7 +217,7 @@ public class SyncProxy extends AbstractProxy {
 	    	Logger.error("# doDelete()", ex);
 	    	createHttpClient();
 	    }
-		Logger.info("< doDelete()");
+		Logger.info("< doDelete(" + len + ")");
 	}
 
 
@@ -249,7 +249,7 @@ public class SyncProxy extends AbstractProxy {
 	    	createHttpClient();
 	    }
 
-	    Logger.info("< doHead()");
+	    Logger.info("< doHead(" + len + ")");
 	}
 
 	

@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.utils.DateUtils;
 import org.apache.http.message.BasicHeader;
 import org.pmw.tinylog.Logger;
 
@@ -35,106 +37,109 @@ public class Redirect extends AbstractProxy {
 
 
 	@Override
-	public void doPost(HttpServletRequest req, final HttpServletResponse res) {
-		Logger.info("> doPost(" + req.getRequestURI() + ")");
+	public void service(HttpServletRequest req, final HttpServletResponse res) {
+		Logger.info("> service(" + req.getRequestURI() + ")");
 		final StringBuffer ignored = new StringBuffer();
 		final URI uri = buildURI(req, ignored);
 	
 		if (uri == null) {
 			respond(res, HttpStatus.SC_SERVICE_UNAVAILABLE);
-			Logger.info("< doPost()");
 			return;
 		}
 
-		List<BasicHeader> headers = new ArrayList<BasicHeader>(1);
-		headers.add(new BasicHeader("Location", uri.toASCIIString()));
-		respond(res, getRedirectSC(req), headers);
+		redirect(req, res, uri);
 			
-		Logger.info("< doPost(" + uri.toASCIIString() + ")");
+		Logger.info("< service(" + uri.toASCIIString() + ")");
 	}
 
 
-	@Override
-	public void doPut(HttpServletRequest req, final HttpServletResponse res) {
-		Logger.info("> doPut(" + req.getRequestURI() + ")");
-		final StringBuffer ignored = new StringBuffer();
-		final URI uri = buildURI(req, ignored);
-	
-		if (uri == null) {
-			respond(res, HttpStatus.SC_SERVICE_UNAVAILABLE);
-			Logger.info("< doPut()");
-			return;
-		}
+//	@Override
+//	public void doPut(HttpServletRequest req, final HttpServletResponse res) {
+//		Logger.info("> doPut(" + req.getRequestURI() + ")");
+//		final StringBuffer ignored = new StringBuffer();
+//		final URI uri = buildURI(req, ignored);
+//	
+//		if (uri == null) {
+//			respond(res, HttpStatus.SC_SERVICE_UNAVAILABLE);
+//			return;
+//		}
+//
+//		redirect(req, res, uri);
+//			
+//		Logger.info("< doPut(" + uri.toASCIIString() + ")");
+//	}
+//
+//	
+//	@Override
+//	public void doGet(HttpServletRequest req, final HttpServletResponse res) {
+//		Logger.info("> doGet(" + req.getRequestURI() + ")");
+//		final StringBuffer ignored = new StringBuffer();
+//		final URI uri = buildURI(req, ignored);
+//	
+//		if (uri == null) {
+//			respond(res, HttpStatus.SC_SERVICE_UNAVAILABLE);
+//			return;
+//		}
+//
+//		redirect(req, res, uri);
+//		
+//		Logger.info("< doGet(" + uri.toASCIIString() + ")");
+//	}
+//	
+//
+//	@Override
+//	public void doHead(HttpServletRequest req, final HttpServletResponse res) {
+//		Logger.info("> doHead(" + req.getRequestURI() + ")");
+//		final StringBuffer ignored = new StringBuffer();
+//		final URI uri = buildURI(req, ignored);
+//	
+//		if (uri == null) {
+//			respond(res, HttpStatus.SC_SERVICE_UNAVAILABLE);
+//			return;
+//		}
+//
+//		redirect(req, res, uri);
+//		
+//		Logger.info("< doHead(" + uri.toASCIIString() + ")");
+//	}
+//
+//	
+//	@Override
+//	public void doDelete(HttpServletRequest req, final HttpServletResponse res) {
+//		Logger.info("> doDelete(" + req.getRequestURI() + ")");
+//		final StringBuffer ignored = new StringBuffer();
+//		final URI uri = buildURI(req, ignored);
+//	
+//		if (uri == null) {
+//			respond(res, HttpStatus.SC_SERVICE_UNAVAILABLE);
+//			return;
+//		}
+//
+//		redirect(req, res, uri);
+//		
+//		Logger.info("< doDelete(" + uri.toASCIIString() + ")");
+//	}
+//
 
+	private void redirect(HttpServletRequest req, final HttpServletResponse res, final URI uri) {
 		List<BasicHeader> headers = new ArrayList<BasicHeader>(1);
-		headers.add(new BasicHeader("Location", uri.toASCIIString()));
+		headers.add(new BasicHeader(HttpHeaders.LOCATION, uri.toASCIIString()));
+		headers.add(new BasicHeader(HttpHeaders.EXPIRES, DateUtils.formatDate(getGoodThru())));
 		respond(res, getRedirectSC(req), headers);
-			
-		Logger.info("< doPut(" + uri.toASCIIString() + ")");
-	}
-
-	
-	@Override
-	public void doGet(HttpServletRequest req, final HttpServletResponse res) {
-		Logger.info("> doGet(" + req.getRequestURI() + ")");
-		final StringBuffer ignored = new StringBuffer();
-		final URI uri = buildURI(req, ignored);
-	
-		if (uri == null) {
-			respond(res, HttpStatus.SC_SERVICE_UNAVAILABLE);
-			return;
-		}
-
-		List<BasicHeader> headers = new ArrayList<BasicHeader>(1);
-		headers.add(new BasicHeader("Location", uri.toASCIIString()));
-		respond(res, getRedirectSC(req), headers);
-		
-		Logger.info("< doGet(" + uri.toASCIIString() + ")");
 	}
 	
-
-	@Override
-	public void doHead(HttpServletRequest req, final HttpServletResponse res) {
-		Logger.info("> doHead(" + req.getRequestURI() + ")");
-		final StringBuffer ignored = new StringBuffer();
-		final URI uri = buildURI(req, ignored);
-	
-		if (uri == null) {
-			respond(res, HttpStatus.SC_SERVICE_UNAVAILABLE);
-			return;
-		}
-
-		List<BasicHeader> headers = new ArrayList<BasicHeader>(1);
-		headers.add(new BasicHeader("Location", uri.toASCIIString()));
-		respond(res, getRedirectSC(req), headers);
-		
-		Logger.info("< doHead(" + uri.toASCIIString() + ")");
-	}
-
-	
-	@Override
-	public void doDelete(HttpServletRequest req, final HttpServletResponse res) {
-		Logger.info("> doDelete(" + req.getRequestURI() + ")");
-		final StringBuffer ignored = new StringBuffer();
-		final URI uri = buildURI(req, ignored);
-	
-		if (uri == null) {
-			respond(res, HttpStatus.SC_SERVICE_UNAVAILABLE);
-			return;
-		}
-
-		List<BasicHeader> headers = new ArrayList<BasicHeader>(1);
-		headers.add(new BasicHeader("Location", uri.toASCIIString()));
-		respond(res, getRedirectSC(req), headers);
-		
-		Logger.info("< doDelete(" + uri.toASCIIString() + ")");
-	}
-
 	
     private int getRedirectSC(final HttpServletRequest req ) {
-    	final String key = "status_code";
-    	//HttpStatus.SC_MOVED_PERMANENTLY;
-    	final int rv = HttpStatus.SC_TEMPORARY_REDIRECT; 
+    	final int rv;
+    	if (getSocketTimeout() > 99 && getSocketTimeout() < 1000) {
+    		rv = getSocketTimeout();
+			Logger.debug("- getRedirectSC() [so.timeout] service code: " + rv);
+    	} else if (getConnectTimeout() > 99 && getConnectTimeout() < 1000) {
+    		rv = getConnectTimeout();
+			Logger.debug("- getRedirectSC() [so.connect] service code: " + rv);
+    	} else {
+    		rv = HttpStatus.SC_TEMPORARY_REDIRECT;
+    	}
         return rv;
     }
 
@@ -155,8 +160,10 @@ public class Redirect extends AbstractProxy {
 		try {
 			os = res.getOutputStream();
 			os.write(data);
+			os.flush();
 		} catch (IOException ignored) {
 			Logger.error("# respond()", ignored);
 		}
 	}
+
 }
