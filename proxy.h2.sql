@@ -29,14 +29,17 @@ GRANT ALL ON PROXY.SERVLET TO PROXY;
 			
 
 
--- drop table PROXY.PROXY;
+drop table PROXY.PROXY;
 
 CREATE CACHED TABLE IF NOT EXISTS  PROXY.PROXY(SERVLET_NAME VARCHAR(128) NOT NULL,
 		                                        LOCATION VARCHAR(512) NOT NULL,
 		                                        SOCKET_TIMEOUT INTEGER DEFAULT 12000,
 		                                        CONNECT_TIMEOUT INTEGER DEFAULT 3000,
-		                                        GOOD_THRU DATE DEFAULT NULL,
+		                                        EXPIRES DATE DEFAULT NULL,
+		                                        REDIRECT_SC INTEGER DEFAULT 307,
+		                                        
 	                                            PRIMARY KEY (SERVLET_NAME, LOCATION));
 
 GRANT ALL ON PROXY.PROXY TO PROXY;
+ 
  

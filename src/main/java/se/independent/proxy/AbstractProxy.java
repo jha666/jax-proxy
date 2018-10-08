@@ -111,8 +111,17 @@ public abstract class AbstractProxy extends HttpServlet {
 	private int so_timeout = 12000;
 	private int so_connect = 3000;
 	private String location = "";
-	private long good_thru_ms = System.currentTimeMillis() + (1000*60*5); 
+	private long expires = System.currentTimeMillis() + (1000*60*5);
+	private int redirect_sc = HttpStatus.SC_TEMPORARY_REDIRECT;
 	
+	public int getRedirect_sc() {
+		return redirect_sc;
+	}
+
+	public void setRedirect_sc(int redirect_sc) {
+		this.redirect_sc = redirect_sc;
+	}
+
 	@Override
 	public void init(ServletConfig arg0) throws ServletException {
 		Logger.info("> init() [name={} path={}]", arg0.getServletName(), arg0.getServletContext().getContextPath());
@@ -132,7 +141,7 @@ public abstract class AbstractProxy extends HttpServlet {
 		try {
 			conn = connect();
 			
-			stmnt = conn.prepareStatement("select * from PROXY.PROXY where SERVLET_NAME = ? and (GOOD_THRU is null or ? < GOOD_THRU) order by GOOD_THRU asc");
+			stmnt = conn.prepareStatement("select * from PROXY.PROXY where SERVLET_NAME = ? and (EXPIRES is null or ? < EXPIRES) order by EXPIRES asc");
 			stmnt.setString(1, getServletName());
 			stmnt.setDate(2, new Date(System.currentTimeMillis()));
 
@@ -153,12 +162,14 @@ public abstract class AbstractProxy extends HttpServlet {
 				if (so_connect < 100) {
 					Logger.warn("- refreshProxyConfig() so.connect=" + so_connect + " ");
 				}
-				Date gt = rs.getDate("GOOD_THRU");
+				Date gt = rs.getDate("EXPIRES");
 				if (gt == null) {
-					good_thru_ms = -1l;
+					expires = -1l;
 				} else {
-					good_thru_ms = gt.getTime();
+					expires = gt.getTime();
 				}
+				
+				redirect_sc = rs.getInt("REDIRECT_SC");
 				
 			}
 		} catch (SQLException sqx) {
@@ -181,14 +192,14 @@ public abstract class AbstractProxy extends HttpServlet {
 	}
 
 	public Date getGoodThru() {
-		return new Date(good_thru_ms);
+		return new Date(expires);
 	}
 	
 	public URI buildURI(final HttpServletRequest req, StringBuffer userInfo) {
 		Logger.debug("> buildURI()");
 		URI rv = null;
 		
-		if (good_thru_ms > 0 && System.currentTimeMillis() > good_thru_ms) {
+		if (expires > 0 && System.currentTimeMillis() > expires) {
 			try { refreshProxyConfig(); } catch (ServletException ign) { return rv;}
 		}
 		

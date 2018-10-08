@@ -130,16 +130,16 @@ public class Redirect extends AbstractProxy {
 	
 	
     private int getRedirectSC(final HttpServletRequest req ) {
-    	final int rv;
-    	if (getSocketTimeout() > 99 && getSocketTimeout() < 1000) {
-    		rv = getSocketTimeout();
-			Logger.debug("- getRedirectSC() [so.timeout] service code: " + rv);
-    	} else if (getConnectTimeout() > 99 && getConnectTimeout() < 1000) {
-    		rv = getConnectTimeout();
-			Logger.debug("- getRedirectSC() [so.connect] service code: " + rv);
-    	} else {
-    		rv = HttpStatus.SC_TEMPORARY_REDIRECT;
-    	}
+    	final int rv = getRedirect_sc();
+//    	if (getSocketTimeout() > 99 && getSocketTimeout() < 1000) {
+//    		rv = getSocketTimeout();
+//			Logger.debug("- getRedirectSC() [so.timeout] service code: " + rv);
+//    	} else if (getConnectTimeout() > 99 && getConnectTimeout() < 1000) {
+//    		rv = getConnectTimeout();
+//			Logger.debug("- getRedirectSC() [so.connect] service code: " + rv);
+//    	} else {
+//    		rv = HttpStatus.SC_TEMPORARY_REDIRECT;
+//    	}
         return rv;
     }
 
