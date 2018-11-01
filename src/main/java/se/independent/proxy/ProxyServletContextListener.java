@@ -1,5 +1,7 @@
 package se.independent.proxy;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -93,7 +95,7 @@ public class ProxyServletContextListener implements ServletContextListener {
 					}
 				}
 				
-				Dynamic dyn = sce.getServletContext().addServlet(servletName, ap);
+				Dynamic dyn = sc.addServlet(servletName, ap);				
 
 				if (dyn == null) {
 					Logger.warn("- contextInitialized() no servlet for: " + servletName);
@@ -124,7 +126,6 @@ public class ProxyServletContextListener implements ServletContextListener {
 						Logger.warn("- contextInitialized() pattern already mapped: " + p);
 					}
 				}
-
 			}
 			
 			
@@ -153,13 +154,7 @@ public class ProxyServletContextListener implements ServletContextListener {
 		try {
 	    	final Context initialContext = new InitialContext();
 	      
-	    	if  (initialContext != null) {
-
-//	    		NamingEnumeration<NameClassPair> list = initialContext.list("");
-//	    		while (list.hasMore()) {
-//	    			Logger.debug("- lookup() jndi: " + list.next().getName());
-//	    		}
-	    		
+	    	if  (initialContext != null) {	    		
 	    		rv = (DataSource)initialContext.lookup(JNDI);
 	    	}
 	    }
@@ -169,4 +164,5 @@ public class ProxyServletContextListener implements ServletContextListener {
 		Logger.debug("< lookup() = " + rv);
 	    return rv;
 	}
+	
 }
