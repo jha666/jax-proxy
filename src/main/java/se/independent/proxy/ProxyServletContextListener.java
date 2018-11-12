@@ -1,7 +1,5 @@
 package se.independent.proxy;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,9 +14,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration.Dynamic;
+import javax.servlet.ServletSecurityElement;
 import javax.servlet.annotation.ServletSecurity.EmptyRoleSemantic;
 import javax.servlet.annotation.ServletSecurity.TransportGuarantee;
-import javax.servlet.ServletSecurityElement;
 import javax.sql.DataSource;
 
 import org.pmw.tinylog.Configurator;

@@ -19,6 +19,10 @@ import org.pmw.tinylog.Logger;
 
 public class Redirect extends AbstractProxy {
 
+	public Redirect() {
+		super();
+	}
+	
 	protected Redirect(DataSource ds) {
 		super(ds);
 	}

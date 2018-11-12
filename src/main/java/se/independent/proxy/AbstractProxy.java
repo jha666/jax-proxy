@@ -14,6 +14,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Enumeration;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -46,6 +49,12 @@ public abstract class AbstractProxy extends HttpServlet {
 	private DataSource proxyDS;
 	
 
+	protected AbstractProxy() {
+		super();
+		proxyDS = lookup();
+	}
+
+	
 	protected AbstractProxy(DataSource ds) {
 		super();
 		proxyDS = ds;
@@ -53,7 +62,7 @@ public abstract class AbstractProxy extends HttpServlet {
 	
 	protected Connection connect() {
 		Connection rv = null;
-	    try {
+	    try {	    	
     		if (proxyDS != null) {
     			rv = proxyDS.getConnection();
     		}
@@ -61,6 +70,25 @@ public abstract class AbstractProxy extends HttpServlet {
 	    catch(SQLException sqx){
 	    	Logger.error("! connect()", sqx);
 	    }
+	    return rv;
+	}
+
+	
+	protected DataSource lookup() {
+		Logger.debug("> lookup()");
+		DataSource rv = null;
+
+		try {
+	    	final Context initialContext = new InitialContext();
+	      
+	    	if  (initialContext != null) {	    		
+	    		rv = (DataSource)initialContext.lookup("jdbc/proxy-ds");
+	    	}
+	    }
+	    catch (NamingException nx) {
+	    	Logger.error("! lookup()", nx);
+	    }
+		Logger.debug("< lookup() = " + rv);
 	    return rv;
 	}
 
