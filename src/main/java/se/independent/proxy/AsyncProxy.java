@@ -44,7 +44,10 @@ import org.apache.http.nio.client.util.HttpAsyncClientUtils;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
+import org.pmw.tinylog.Configurator;
+import org.pmw.tinylog.Level;
 import org.pmw.tinylog.Logger;
+import org.pmw.tinylog.writers.RollingFileWriter;
 
 
 public class AsyncProxy extends AbstractProxy {
@@ -53,11 +56,23 @@ public class AsyncProxy extends AbstractProxy {
 
 	//private static final Logger LOG = LogManager.getLogger(AsyncRedirectProxy.class);	
 
+	static {
+		Configurator.currentConfig()
+		   .writer(new RollingFileWriter("proxy.log", 8), "{date:HH:mm:ss} {level|min-size=7} [{thread}] {class} ({line}): {message}")
+		   .level(Level.DEBUG)
+		   .activate();
+	}
+	
 	private CloseableHttpAsyncClient  httpclient = null;
-		
+
+	public AsyncProxy() {
+		super();
+		Logger.debug("- AsyncProxy()");
+	}
+
 	public AsyncProxy(final DataSource ds) {
 		super(ds);
-		Logger.debug("- AsyncProxy()");
+		Logger.debug("- AsyncProxy(" + ds + ")");
 	}
 
 
@@ -268,7 +283,6 @@ public class AsyncProxy extends AbstractProxy {
 	@Override
 	public void doGet(HttpServletRequest req, final HttpServletResponse res) {
 		Logger.info("> doGet(" + req.getRemoteHost() + ", " + req.getRequestURI() + "," + res.hashCode() + ")");
-		int len = -1;
 		StringBuffer userInfo = new StringBuffer();
 		final URI uri = buildURI(req, userInfo);
 		
@@ -290,7 +304,6 @@ public class AsyncProxy extends AbstractProxy {
 	@Override
 	public void doDelete(HttpServletRequest req, final HttpServletResponse res) {
 		Logger.info("> doDelete(" + req.getRemoteHost() + ", " + req.getRequestURI() + "," + res.hashCode() + ")");
-		int len = -1;
 		StringBuffer userInfo = new StringBuffer();
 		final URI uri = buildURI(req, userInfo);
 		
@@ -312,7 +325,6 @@ public class AsyncProxy extends AbstractProxy {
 	@Override
 	public void doHead(HttpServletRequest req, final HttpServletResponse res) {
 		Logger.info("> doHead(" + req.getRemoteHost() + ", " + req.getRequestURI() + "," + res.hashCode() + ")");
-		int len = -1;
 		StringBuffer userInfo = new StringBuffer();
 		final URI uri = buildURI(req, userInfo);
 		
@@ -334,7 +346,6 @@ public class AsyncProxy extends AbstractProxy {
 	@Override
 	public void doOptions(HttpServletRequest req, final HttpServletResponse res) {
 		Logger.info("> doOptions(" + req.getRemoteHost() + ", " + req.getRequestURI() + "," + res.hashCode() + ")");
-		int len = -1;
 		StringBuffer userInfo = new StringBuffer();
 		final URI uri = buildURI(req, userInfo);
 		

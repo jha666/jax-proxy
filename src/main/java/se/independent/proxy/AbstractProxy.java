@@ -30,8 +30,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.pmw.tinylog.Configurator;
 import org.pmw.tinylog.Level;
 import org.pmw.tinylog.Logger;
+import org.pmw.tinylog.writers.RollingFileWriter;
 
 
 public abstract class AbstractProxy extends HttpServlet {
@@ -39,12 +41,13 @@ public abstract class AbstractProxy extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	//private static final Logger LOG = LogManager.getLogger(Proxy.class);	
-//	static {
-//		Configurator.currentConfig()
-//		   .writer(new RollingFileWriter("proxy.log", 8), "{date:HH:mm:ss} {level|min-size=7} [{thread}] {class} ({line}): {message}")
-//		   .level(Level.DEBUG)
-//		   .activate();
-//	}
+	
+	static {
+		Configurator.currentConfig()
+		   .writer(new RollingFileWriter("proxy.log", 8), "{date:HH:mm:ss} {level|min-size=7} [{thread}] {class} ({line}): {message}")
+		   .level(Level.DEBUG)
+		   .activate();
+	}
 	
 	private DataSource proxyDS;
 	
@@ -68,14 +71,14 @@ public abstract class AbstractProxy extends HttpServlet {
     		}
 	    }
 	    catch(SQLException sqx){
-	    	Logger.error("! connect()", sqx);
+	    	Logger.error("! connect() {}", sqx.getMessage());
 	    }
 	    return rv;
 	}
 
 	
 	protected DataSource lookup() {
-		Logger.debug("> lookup()");
+		Logger.info("> lookup()");
 		DataSource rv = null;
 
 		try {
@@ -88,7 +91,7 @@ public abstract class AbstractProxy extends HttpServlet {
 	    catch (NamingException nx) {
 	    	Logger.error("! lookup()", nx);
 	    }
-		Logger.debug("< lookup() = " + rv);
+		Logger.info("< lookup() = " + rv);
 	    return rv;
 	}
 
